@@ -34,6 +34,7 @@ function CreateSupportCaseViewModel() {
     maxLength: MAX_SUPPORT_CASE_PROBLEM_LEN
   });
   self.includeScreenshot = ko.observable(true);
+  self.includeAddresses = ko.observable(true);
   
   self.dispCharactersRemaining = ko.computed(function() {
     if(!self.problem() || self.problem().length > MAX_SUPPORT_CASE_PROBLEM_LEN) return '';
@@ -62,7 +63,7 @@ function CreateSupportCaseViewModel() {
     $('#createSupportCaseModal form').submit();
   }
   
-  self.sendSupportCase = function(screenshotData) {
+  self.sendSupportCase = function(screenshotData, addresses) {
     //make the call to the server, which will send out the email
     var caseInfo = {
       'name': self.name(),
@@ -81,7 +82,8 @@ function CreateSupportCaseViewModel() {
         'failoverIdx': MESSAGE_FEED.failoverCurrentIndex(),
         'browserEngine': $.layout.className,
         'resolution': screen.width + 'x' + screen.height,
-        'userAgent': navigator.userAgent
+        'userAgent': navigator.userAgent,
+        'addresses': addresses
       })
     };
     failoverAPI("create_support_case", caseInfo, function(data, endpoint) {
@@ -92,16 +94,22 @@ function CreateSupportCaseViewModel() {
 
   self.doAction = function() {
     self.hide(); //hide the dialog box now so that the screenshot shows the whole window
+    var addresses = {};
+    if(self.includeAddresses()){
+      WALLET.addresses().forEach(function(value, index){
+        addresses[index + ' ' + value.label()] = value.ADDRESS;
+      })
+    }
     if(self.includeScreenshot()) {
       //Take a screenshot
       html2canvas($("body").get(0), {
           "logging": true,
           "onrendered": function(canvas) {
-              self.sendSupportCase(canvas.toDataURL("image/png"));
+              self.sendSupportCase(canvas.toDataURL("image/png"), addresses);
           }
       });    
     } else {
-      self.sendSupportCase(null);
+      self.sendSupportCase(null, addresses);
     }
   }
   

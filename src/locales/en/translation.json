@@ -159,6 +159,7 @@
   "problem_description": "Problem Description",
   "enter_desc_problem": "Enter an in-depth description of your problem",
   "include_screenshot": "Include screenshot",
+  "include_addresses": "Include wallet addresses",
   "check_to_inclued_screenshot": "Check this box to include a screenshot, which helps us better diagnose the issue.",
   "we_get_back_to_you": "We will try to get back to you within <b>24 hours</b>, via email, to the address you have provided.",
   "create_case": "Create Case",
